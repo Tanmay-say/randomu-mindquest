@@ -36,6 +36,8 @@ interface GameState {
   personalityType: string;
   mintedTokenId: number | null;
   error: string | null;
+  walletConnected: boolean;
+  userAddress: string | null;
 }
 
 const INITIAL_TRAITS: PersonalityTraits = {
@@ -115,8 +117,32 @@ export default function MindQuestGame() {
     aiStory: '',
     personalityType: '',
     mintedTokenId: null,
-    error: null
+    error: null,
+    walletConnected: false,
+    userAddress: null
   });
+
+  // Connect wallet and switch to Sepolia
+  const connectWallet = async () => {
+    try {
+      const signer = await getSigner();
+      if (!signer) {
+        throw new Error('MetaMask not found');
+      }
+
+      await switchToSepolia();
+      const address = await signer.getAddress();
+
+      setGameState(prev => ({
+        ...prev,
+        walletConnected: true,
+        userAddress: address
+      }));
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Failed to connect wallet';
+      setGameState(prev => ({ ...prev, phase: 'error', error: message }));
+    }
+  };
 
   const startNewSession = () => {
     // Shuffle questions for variety
@@ -408,7 +434,11 @@ export default function MindQuestGame() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <Header />
+      <Header 
+        onConnectWallet={connectWallet}
+        walletConnected={gameState.walletConnected}
+        userAddress={gameState.userAddress || undefined}
+      />
       <main className="container-pro py-8">
         {renderPhase()}
       </main>

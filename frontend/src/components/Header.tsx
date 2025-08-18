@@ -57,11 +57,7 @@ export default function Header({ onConnectWallet, walletConnected, userAddress }
             
             <button
               onClick={onConnectWallet}
-              className={`font-accent px-8 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 ${
-                walletConnected
-                  ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl'
-              }`}
+              className={`btn-primary ${walletConnected ? 'bg-green-500 hover:bg-green-600' : ''}`}
             >
               {walletConnected ? 'Wallet Connected' : 'Connect Wallet'}
             </button>
