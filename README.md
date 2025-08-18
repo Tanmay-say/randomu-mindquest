@@ -2,6 +2,17 @@
 
 A local-first personality game that mints a verifiable NFT on Ethereum Sepolia. Game logic and AI run off-chain; the only transaction is the NFT mint (and optional DCIPHER VRF request).
 
+## Screenshots
+
+<p align="center">
+  <img src="photos/Screenshot%202025-08-18%20011857.png" alt="Game screenshot 1" width="30%"/>
+  <img src="photos/Screenshot%202025-08-18%20011911.png" alt="Game screenshot 2" width="30%"/>
+  <img src="photos/Screenshot%202025-08-18%20190830.png" alt="NFT in wallet" width="30%"/>
+  <br/>
+  <em>Representative UI and minted NFT view (Sepolia).</em>
+  
+</p>
+
 ## Highlights
 - Single on-chain transaction for minting; gameplay and AI are off-chain
 - Deterministic SVG image generated from traits + randomness
