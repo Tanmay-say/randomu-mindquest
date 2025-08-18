@@ -1,245 +1,93 @@
-# 🧠 MindQuest - AI Personality Game
+# MindQuest
 
-> **The AI-powered personality discovery game that mints unique NFTs on Ethereum**
->
-> **🎯 NEW: Gas-optimized! Only pay gas fees when minting your NFT**
+A local-first personality game that mints a verifiable NFT on Ethereum Sepolia. Game logic and AI run off-chain; the only transaction is the NFT mint (and optional DCIPHER VRF request).
 
-## ✨ What's New - Gas Optimization
+## Highlights
+- Single on-chain transaction for minting; gameplay and AI are off-chain
+- Deterministic SVG image generated from traits + randomness
+- Optional DCIPHER/Randamu VRF-backed mint for verifiable randomness
+- Frontend: Next.js, Tailwind CSS, TypeScript
+- Chain: Sepolia, Hardhat, OpenZeppelin, Ethers
 
-### 🚀 **Before (Expensive)**
-- ❌ **Every question** required blockchain transaction (gas fees)
-- ❌ **Session start** required blockchain transaction (gas fees)  
-- ❌ **Every answer** required blockchain transaction (gas fees)
-- ❌ **Total cost**: ~5-7 gas fees per game session
+## Architecture
+- `frontend/`: React UI and local game engine (traits, AI story, tokenURI builder)
+- `contracts/MindQuest.sol`: ERC-721 with two flows:
+  - `mintPersonalityNFT(...)`: direct mint with provided `tokenUri`
+  - `requestMintWithVRF(...)`: requests DCIPHER randomness; mints in `onRandomnessReceived`
+- `scripts/deploy.js`: Hardhat deploy. Writes `deployment-info.json` and `frontend/.env.local`
 
-### 💎 **Now (Optimized)**
-- ✅ **All questions** answered locally (FREE)
-- ✅ **AI story generation** happens locally (FREE)
-- ✅ **Personality calculation** happens locally (FREE)
-- ✅ **Only NFT minting** requires blockchain (1 gas fee)
-- ✅ **Total cost**: 1 gas fee per NFT minted
+## Prerequisites
+- Node.js 18 LTS (recommended)
+- MetaMask on Sepolia
+- A funded Sepolia account for deployment and mint testing
 
-## 🎮 How It Works
-
-### 1. **Connect Wallet** (FREE)
-- Connect MetaMask to Sepolia testnet
-- No blockchain interaction required
-
-### 2. **Answer Questions** (FREE)
-- Answer 5 thought-provoking questions locally
-- Your personality traits are calculated in real-time
-- **NO GAS FEES** - everything happens in your browser
-
-### 3. **AI Story Generation** (FREE)
-- AI generates your unique personality story
-- Determines your personality type
-- **NO GAS FEES** - powered by Groq QROQ
-
-### 4. **Mint NFT** (Single Gas Fee)
-- Mint your unique personality NFT on Ethereum
-- **ONLY TIME** you pay gas fees
-- NFT contains your traits, story, and personality type
-
-## 🏗️ Architecture
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   Smart         │    │   AI Service    │
-│   (Local)       │    │   Contract      │    │   (Groq QROQ)   │
-├─────────────────┤    ├─────────────────┤    ├─────────────────┤
-│ • Questions     │    │ • NFT Minting   │    │ • Story Gen     │
-│ • Trait Calc    │    │ • Data Storage  │    │ • Personality   │
-│ • UI/UX        │    │ • Ownership     │    │   Classification│
-│ • Wallet Conn   │    │ • Metadata      │    │ • Local Cache   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │                       │                       │
-         ▼                       ▼                       ▼
-    NO GAS FEES            SINGLE GAS FEE          NO GAS FEES
-    (Local Processing)     (NFT Mint Only)        (API Calls)
-```
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ 
-- MetaMask wallet
-- Sepolia testnet ETH
-
-### 1. Clone & Install
+## Quick start
 ```bash
-git clone <repository-url>
-cd mindquest
+# install
 npm install
-cd frontend && npm install
-```
+cd frontend && npm install && cd ..
 
-### 2. Environment Setup
+# compile & test
+npm run compile
+npm run test
+
+# run the app (separate shell)
+cd frontend && npm run dev
+```
+Open `http://localhost:3000`.
+
+## Environment
+Create `.env` in the repo root. Minimum:
 ```bash
-# Create .env file in root directory
-PRIVATE_KEY=0x_your_private_key_here
-GROQ_API_KEY=your_groq_api_key_here
-```
+# wallet used by Hardhat for deploys/tests
+PRIVATE_KEY=0xYOUR_PRIVATE_KEY
+SEPOLIA_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
 
-### 3. Deploy Smart Contract
+# AI (Groq); "demo-key" works for local fallback
+GROQ_API_KEY=demo-key
+
+# Optional: DCIPHER/Randamu VRF
+# Find the RandomnessSender address for Sepolia in DCIPHER docs
+# If unset, VRF requests are disabled but direct mint works
+DCIPHER_RANDOMNESS_SENDER=0xRandomnessSenderOnSepolia
+```
+Frontend reads the deployed address from `frontend/.env.local` (auto-written by the deploy script). You can also set it manually via `NEXT_PUBLIC_CONTRACT_ADDRESS`.
+
+## Deploy
 ```bash
-# Deploy to Sepolia testnet
-npm run deploy:sepolia
+# deploy to Sepolia
+npm run deploy
 ```
+Notes:
+- The deploy script checks balance and fails fast if insufficient. Fund the deployer address with Sepolia ETH (e.g., via Chainlink, Alchemy, or QuickNode faucets).
+- If `DCIPHER_RANDOMNESS_SENDER` is not set, the contract deploys with a zero sender. Direct mint works; VRF flow will be disabled until you redeploy or set the sender on a future version.
 
-### 4. Start Frontend
-```bash
-cd frontend
-npm run dev
-```
+## Mint flows
+1) Direct mint (default)
+- Frontend builds SVG + JSON metadata (`tokenUri`) using traits and drand randomness
+- Calls `mintPersonalityNFT(traits, story, type, tokenUri)`
+- Single transaction (pay gas once)
 
-### 5. Play the Game!
-1. Connect your MetaMask wallet
-2. Answer 5 personality questions (FREE)
-3. Get your AI-generated story (FREE)
-4. Mint your personality NFT (1 gas fee)
+2) VRF-backed mint (DCIPHER/Randamu)
+- Requires `DCIPHER_RANDOMNESS_SENDER` to be set for Sepolia
+- Frontend calls `requestMintWithVRF(traits, story, type, tokenUri, callbackGasLimit)` and sends the fee returned by the network (integration exposes a helper to compute price)
+- DCIPHER calls back `onRandomnessReceived`, contract mints, and stores `vrfRandomness`
 
-## 💰 Cost Breakdown
+## Where to get `DCIPHER_RANDOMNESS_SENDER`
+- Locate the “RandomnessSender” address for Sepolia in the DCIPHER documentation (Networks / Verifiable Randomness). Add that value to your `.env` as `DCIPHER_RANDOMNESS_SENDER`.
 
-### **Old Implementation (Expensive)**
-```
-Session Start:     ~$0.50-1.00
-Question 1:        ~$0.50-1.00  
-Question 2:        ~$0.50-1.00
-Question 3:        ~$0.50-1.00
-Question 4:        ~$0.50-1.00
-Question 5:        ~$0.50-1.00
-AI Generation:     ~$0.50-1.00
-NFT Mint:          ~$0.50-1.00
-─────────────────────────────────
-TOTAL:             ~$3.50-7.00 per game
-```
+## Troubleshooting
+- "missing revert data (action=estimateGas)" when minting:
+  - The ABI/contract address mismatch. Ensure you redeployed after contract changes and the frontend points to the new address in `frontend/.env.local` (or set `NEXT_PUBLIC_CONTRACT_ADDRESS`).
+- Node version warnings from Hardhat:
+  - Use Node 18 LTS for best compatibility.
+- Not enough test ETH to deploy or mint:
+  - Top up via a Sepolia faucet.
 
-### **New Implementation (Optimized)**
-```
-Session Start:     FREE (Local)
-Question 1:        FREE (Local)
-Question 2:        FREE (Local)  
-Question 3:        FREE (Local)
-Question 4:        FREE (Local)
-Question 5:        FREE (Local)
-AI Generation:     FREE (Local)
-NFT Mint:          ~$0.50-1.00
-─────────────────────────────────
-TOTAL:             ~$0.50-1.00 per game
-```
+## Security and notes
+- Do not commit private keys. `.env` is gitignored.
+- NFT `tokenUri` is provided by the client. In production, consider pinning metadata/images to IPFS or storing in a controlled backend.
+- DCIPHER VRF round/proof can additionally be embedded in metadata for off-chain verification.
 
-**💰 SAVINGS: 85-90% reduction in gas costs!**
-
-## 🔧 Technical Details
-
-### Smart Contract (`contracts/MindQuest.sol`)
-- **ERC-721 NFT** with personality metadata
-- **Single function**: `mintPersonalityNFT()`
-- **No session management** (handled locally)
-- **No response tracking** (handled locally)
-- **Optimized for gas efficiency**
-
-### Frontend (`frontend/`)
-- **Local question processing**
-- **Local trait calculation**
-- **Local AI integration**
-- **Single blockchain call** for NFT minting
-
-### AI Integration (`frontend/src/lib/groq.ts`)
-- **Groq QROQ** for personality analysis
-- **Local story generation**
-- **Local personality classification**
-- **No blockchain calls**
-
-## 🧪 Testing
-
-### Run Tests
-```bash
-npm test
-```
-
-### Test Coverage
-```bash
-npm run coverage
-```
-
-### Deploy & Test on Sepolia
-```bash
-npm run deploy:sepolia
-npm run test:sepolia
-```
-
-## 🌐 Networks
-
-### Sepolia Testnet (Recommended)
-- **Chain ID**: 11155111
-- **RPC URL**: https://sepolia.infura.io/v3/
-- **Explorer**: https://sepolia.etherscan.io
-- **Faucet**: https://faucets.chain.link/sepolia
-
-### Local Development
-```bash
-npm run deploy:local
-npm run test:local
-```
-
-## 📊 Performance Metrics
-
-### Gas Usage
-- **Old Contract**: ~500,000-800,000 gas per game
-- **New Contract**: ~80,000-120,000 gas per game
-- **Improvement**: 75-85% gas reduction
-
-### User Experience
-- **Old**: Multiple wallet confirmations, delays
-- **New**: Smooth local experience, single confirmation
-- **Improvement**: 90% faster gameplay
-
-### Cost Efficiency
-- **Old**: $3.50-7.00 per game
-- **New**: $0.50-1.00 per game
-- **Improvement**: 85-90% cost reduction
-
-## 🔮 Future Enhancements
-
-### Phase 2: Advanced Features
-- [ ] **IPFS Integration** for decentralized metadata
-- [ ] **Batch Minting** for multiple personalities
-- [ ] **Trait Evolution** over time
-- [ ] **Social Features** and leaderboards
-
-### Phase 3: Scaling
-- [ ] **Layer 2 Solutions** (Polygon, Arbitrum)
-- [ ] **Cross-chain Compatibility**
-- [ ] **Mobile App** development
-- [ ] **Community Governance**
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for details
-
-## 🙏 Acknowledgments
-
-- **OpenZeppelin** for secure smart contract libraries
-- **Groq** for AI personality analysis
-- **Ethereum Foundation** for blockchain infrastructure
-- **Hardhat** for development tools
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-repo/discussions)
-- **Documentation**: [Wiki](https://github.com/your-repo/wiki)
-
----
-
-**🎉 Ready to discover your true personality with minimal gas costs? Start your MindQuest today!**
+## License
+MIT
