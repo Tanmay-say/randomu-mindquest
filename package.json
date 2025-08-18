@@ -1,19 +1,24 @@
 {
   "name": "mindquest",
   "version": "1.0.0",
-  "description": "",
+  "description": "MindQuest - AI Personality Game with Blockchain NFTs",
   "main": "index.js",
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
     "deploy": "hardhat run scripts/deploy.js --network sepolia",
     "verify": "hardhat verify --network sepolia",
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "frontend:dev": "cd frontend && npm run dev",
     "frontend:build": "cd frontend && npm run build",
-    "frontend:start": "cd frontend && npm run start"
+    "frontend:start": "cd frontend && npm run start",
+    "clean": "rm -rf frontend/node_modules frontend/.next frontend/package-lock.json"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["blockchain", "ai", "nft", "personality", "game", "ethereum", "sepolia"],
+  "author": "MindQuest Team",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
@@ -28,10 +33,28 @@
     "dotenv": "^17.2.1",
     "ethereum-waffle": "^4.0.10",
     "ethers": "^5.7.2",
-    "hardhat": "^2.19.4"
+    "hardhat": "^2.19.4",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
   "dependencies": {
     "axios": "^1.11.0",
-    "groq-sdk": "^0.30.0"
+    "groq-sdk": "^0.30.0",
+    "@rainbow-me/rainbowkit": "^2.2.8",
+    "@wagmi/connectors": "^5.9.3",
+    "@wagmi/core": "^2.19.0",
+    "ethers": "^6.15.0",
+    "next": "15.4.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "viem": "^2.33.3",
+    "wagmi": "^2.16.3"
   }
 }

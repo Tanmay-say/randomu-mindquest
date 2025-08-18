@@ -1,0 +1,353 @@
+/* Import Premium Google Fonts for a more stylish look */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #0066ff;
+  --accent: #ffd700;
+  --border: #000000;
+  --muted: #6b7280;
+  --surface: #f8fafc;
+  --surface-hover: #f1f5f9;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Premium Font Classes for DCIPHER-style design */
+.font-display {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.font-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.font-body {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.font-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-variant: small-caps;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Enhanced Button Styles */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-secondary {
+  @apply bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-outline {
+  @apply border-2 border-black text-black font-semibold py-4 px-8 rounded-xl transition-all duration-300 hover:bg-black hover:text-white hover:shadow-xl;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Enhanced Card Styles */
+.card {
+  @apply bg-white border-2 border-black rounded-xl shadow-none;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #0066ff, #ffd700, #0066ff);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+.card:hover::before {
+  transform: scaleX(1);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-4px);
+}
+
+.card-header {
+  @apply border-b-2 border-black p-8;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  position: relative;
+}
+
+.card-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #000, transparent);
+}
+
+.card-body {
+  @apply p-8;
+}
+
+/* Enhanced Input Styles */
+.input-field {
+  @apply w-full border-2 border-black rounded-xl p-5 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.3s ease;
+  background: var(--surface);
+}
+
+.input-field:focus {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  background: white;
+}
+
+/* Enhanced Divider */
+.divider {
+  @apply border-t border-black my-12;
+  position: relative;
+}
+
+.divider::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #000, transparent);
+}
+
+.divider::before {
+  content: '✦';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 0 8px;
+  font-size: 20px;
+  color: #000;
+}
+
+/* Enhanced Animations */
+.fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px) scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+.slide-up {
+  animation: slideUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(40px) rotateX(15deg); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) rotateX(0deg); 
+  }
+}
+
+/* Additional Premium Font Classes */
+.font-hero {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.font-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  font-style: italic;
+}
+
+.font-accent {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Enhanced Typography Utilities */
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+/* Professional Layout Utilities */
+.container-pro {
+  @apply max-w-7xl mx-auto px-8;
+}
+
+.section-pro {
+  @apply py-24 px-8;
+}
+
+.grid-pro {
+  @apply grid gap-10;
+}
+
+/* Enhanced Hover Effects */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Professional Spacing */
+.space-pro {
+  @apply space-y-8;
+}
+
+.padding-pro {
+  @apply p-8;
+}
+
+.margin-pro {
+  @apply m-8;
+}
+
+/* Enhanced Visual Elements */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.border-glow {
+  box-shadow: 0 0 20px rgba(0, 102, 255, 0.3);
+}
+
+/* Professional Color Schemes */
+.bg-surface {
+  background: var(--surface);
+}
+
+.bg-surface-hover {
+  background: var(--surface-hover);
+}
+
+/* Enhanced Responsiveness */
+@media (max-width: 768px) {
+  .container-pro {
+    @apply px-6;
+  }
+  
+  .section-pro {
+    @apply py-16 px-6;
+  }
+  
+  .padding-pro {
+    @apply p-6;
+  }
+}
